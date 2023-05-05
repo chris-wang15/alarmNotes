@@ -6,7 +6,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
-class MainViewModel : ViewModel() {
+@Deprecated("for test only")
+class ColdTestViewModel : ViewModel() {
     // 以下是cold flow 没有collect就不会执行；相反还有hot flow
     val countDownFlow: Flow<Int> = flow {
         val startingValue = 5

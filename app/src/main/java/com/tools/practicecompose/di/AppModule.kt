@@ -2,10 +2,9 @@ package com.tools.practicecompose.di
 
 import android.app.Application
 import androidx.room.Room
-import com.tools.practicecompose.feature_note.data.data_source.NoteDataBase
-import com.tools.practicecompose.feature_note.data.repository.NoteRepositoryImpl
-import com.tools.practicecompose.feature_note.domain.repository.NoteRepository
-import com.tools.practicecompose.feature_note.domain.use_case.*
+import com.tools.practicecompose.feature.repository.data_base.NoteDataBase
+import com.tools.practicecompose.feature.repository.NoteRepository
+import com.tools.practicecompose.feature.domain.use_case.*
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -29,7 +28,7 @@ object AppModule {
     @Provides
     @Singleton
     fun provideNoteRepository(db: NoteDataBase): NoteRepository {
-        return NoteRepositoryImpl(db.noteDao)
+        return NoteRepository(db.noteDao)
     }
 
     @Provides
@@ -40,6 +39,8 @@ object AppModule {
             deleteNoteUseCase = DeleteNoteUseCase(repository),
             addNoteUseCase = AddNoteUseCase(repository),
             getNoteByIdUseCase = GetNoteByIdUseCase(repository),
+            editLevelUseCase = EditLevelUseCase(repository),
+            getLevelColorUseCase = GetLevelColorUseCase(repository),
         )
     }
 }

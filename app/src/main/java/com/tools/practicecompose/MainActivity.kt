@@ -3,29 +3,19 @@ package com.tools.practicecompose
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.tools.practicecompose.feature_note.presentation.add_edit_notes.components.AddEditNoteScreen
-import com.tools.practicecompose.feature_note.presentation.notes.components.NoteScreen
-import com.tools.practicecompose.feature_note.presentation.util.Screen
+import com.tools.practicecompose.feature.presentation.edit_page.components.AddEditNoteScreen
+import com.tools.practicecompose.feature.presentation.notes.components.NoteScreen
+import com.tools.practicecompose.feature.presentation.Screen
 import com.tools.practicecompose.ui.theme.MainComposeTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.Flow
@@ -89,30 +79,6 @@ fun <T> ComponentActivity.collectLatestLifecycleFlow(flow: Flow<T>, collect: sus
     lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
             flow.collectLatest(collect)
-        }
-    }
-}
-
-@Composable
-@Deprecated("test only")
-fun RunColdTest(name: String) {
-    val viewModel = viewModel<ColdTestViewModel>()
-    val time = viewModel.countDownFlow.collectAsState(initial = 5)
-    val count = viewModel.stateFlow.collectAsState(initial = 0)
-    // A surface container using the 'background' color from the theme
-    Surface(
-        modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background
-    ) {
-        Box(modifier = Modifier.fillMaxSize()) {
-            Text(
-                text = time.value.toString(),
-                fontSize = 30.sp,
-                modifier = Modifier.align(Alignment.Center),
-            )
-            Button(onClick = { viewModel.increaseCounter() }) {
-                Text(text = "Counter: ${count.value}")
-            }
         }
     }
 }

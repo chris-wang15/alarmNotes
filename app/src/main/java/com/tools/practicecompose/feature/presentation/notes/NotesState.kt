@@ -6,6 +6,6 @@ import com.tools.practicecompose.feature.domain.sort.OrderType
 
 data class NotesState(
     val note: List<Note> = emptyList(),
-    val noteOrder: NoteOrder = NoteOrder.Date(OrderType.Descending),
+    val noteOrder: NoteOrder = NoteOrder(),
     val isOrderSectionVisible: Boolean = false
 )

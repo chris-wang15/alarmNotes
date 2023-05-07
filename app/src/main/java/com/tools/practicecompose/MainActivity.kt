@@ -13,9 +13,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.tools.practicecompose.feature.presentation.edit_page.components.AddEditNoteScreen
-import com.tools.practicecompose.feature.presentation.notes.components.NoteScreen
 import com.tools.practicecompose.feature.presentation.Screen
+import com.tools.practicecompose.feature.presentation.edit_page.components.AddEditNoteScreen
+import com.tools.practicecompose.feature.presentation.level.components.LevelScreen
+import com.tools.practicecompose.feature.presentation.notes.components.NoteScreen
 import com.tools.practicecompose.ui.theme.MainComposeTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.Flow
@@ -28,10 +29,6 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-//        val viewModelTest: ColdTestViewModel by viewModels()
-//        collectLatestLifecycleFlow(viewModelTest.stateFlow) {
-//            binding.textView.text = it
-//        }
         setContent {
             MainComposeTheme {
                 Surface(color = MaterialTheme.colorScheme.background) {
@@ -46,7 +43,7 @@ class MainActivity : ComponentActivity() {
 
                         composable(
                             route = Screen.AddEditNoteScreen.route
-                                    + "?noteId={noteId}&noteColor={noteColor}",
+                                    + "?noteId={noteId}",
                             arguments = listOf(
                                 navArgument(
                                     name = "noteId"
@@ -54,19 +51,13 @@ class MainActivity : ComponentActivity() {
                                     type = NavType.IntType
                                     defaultValue = -1
                                 },
-                                navArgument(
-                                    name = "noteColor"
-                                ) {
-                                    type = NavType.IntType
-                                    defaultValue = -1
-                                },
                             )
                         ) {
-                            val color = it.arguments?.getInt("noteColor") ?: -1
-                            AddEditNoteScreen(
-                                navController = navController,
-                                noteColor = color
-                            )
+                            AddEditNoteScreen(navController = navController)
+                        }
+
+                        composable(route = Screen.EditLevelScreen.route) {
+                            LevelScreen(navController = navController)
                         }
                     }
                 }

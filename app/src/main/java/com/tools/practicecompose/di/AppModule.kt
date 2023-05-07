@@ -41,6 +41,7 @@ object AppModule {
             getNoteByIdUseCase = GetNoteByIdUseCase(repository),
             editLevelUseCase = EditLevelUseCase(repository),
             getLevelColorUseCase = GetLevelColorUseCase(repository),
+            setReminderUseCase = SetReminderUseCase(repository),
         )
     }
 }

@@ -1,8 +1,9 @@
 package com.tools.practicecompose.feature.presentation.edit_page
 
+import android.util.Log
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.graphics.toArgb
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -35,32 +36,41 @@ class AddEditNoteViewModel @Inject constructor(
     )
     val noteContent: State<NoteTextFieldState> = _noteContent
 
-    private val _noteColor = mutableStateOf(Note.noteColors.random().toArgb())
-    val noteColor: State<Int> = _noteColor
+    private val _readOnlyMode = mutableStateOf(true)
+    val readOnlyMode: State<Boolean> = _readOnlyMode
+
+    private val _noteLevel = mutableStateOf(1)
+    val noteLevel: State<Int> = _noteLevel
 
     private val _eventFlow = MutableSharedFlow<UiEvent>()
     val eventFlow = _eventFlow.asSharedFlow()
 
-    private var currentNoteId : Int? = null
+    private val _noteReminder: MutableState<Long?> = mutableStateOf(null)
+    val noteReminder: State<Long?> = _noteReminder
+
+    private var currentNoteId: Int? = null
 
     init {
-        savedStateHandle.get<Int>("noteId")?.let {noteId->
-            if (noteId != -1) {
-                viewModelScope.launch {
-                    noteUseCase.getNoteByIdUseCase(noteId)?.also { node->
-                        currentNoteId = node.id
-                        _noteTitle.value = noteTitle.value.copy(
-                            text = node.title,
-                            isHintVisible = false,
-                        )
-                        _noteContent.value = noteContent.value.copy(
-                            text = node.content,
-                            isHintVisible = false,
-                        )
-                        _noteColor.value = node.level
-                    }
+        val noteId = savedStateHandle.get<Int>("noteId") ?: -1
+        if (noteId != -1) {
+            _readOnlyMode.value = true
+            viewModelScope.launch {
+                noteUseCase.getNoteByIdUseCase.invoke(noteId)?.also { node ->
+                    currentNoteId = node.id
+                    _noteTitle.value = noteTitle.value.copy(
+                        text = node.title,
+                        isHintVisible = false,
+                    )
+                    _noteContent.value = noteContent.value.copy(
+                        text = node.content,
+                        isHintVisible = false,
+                    )
+                    _noteLevel.value = node.level
+                    _noteReminder.value = node.remindTime
                 }
             }
+        } else {
+            _readOnlyMode.value = false
         }
     }
 
@@ -84,43 +94,70 @@ class AddEditNoteViewModel @Inject constructor(
                 )
             }
 
-
             is AddEditNoteEvent.ChangeContentFocus -> {
                 _noteContent.value = noteContent.value.copy(
                     isHintVisible = !event.focusState.isFocused && noteContent.value.text.isBlank()
                 )
             }
 
-            is AddEditNoteEvent.ChangeColor -> {
-                _noteColor.value = event.color
+            is AddEditNoteEvent.ChangeLevel -> {
+                _noteLevel.value = event.level
             }
 
-            is AddEditNoteEvent.SaveNote -> {
+            is AddEditNoteEvent.SaveNoteAndExit -> {
                 viewModelScope.launch {
                     try {
-                        noteUseCase.addNoteUseCase(
-                            Note(
-                                title = noteTitle.value.text,
-                                content = noteContent.value.text,
-                                timestamp = System.currentTimeMillis(),
-                                level = noteColor.value,
-                                id = currentNoteId
+                        val note = Note(
+                            title = noteTitle.value.text,
+                            content = noteContent.value.text,
+                            timestamp = System.currentTimeMillis(),
+                            level = noteLevel.value,
+                            id = currentNoteId,
+                            remindTime = noteReminder.value,
+                        )
+                        // add note
+                        // TODO DELETE
+                        Log.e("AddEditNoteScreen", "Add Note level ${note.level}")
+                        noteUseCase.addNoteUseCase.invoke(note)
+                        // turn on or turn off reminder
+                        noteUseCase.setReminderUseCase.invoke(note)
+                        _eventFlow.emit(UiEvent.NavigateBack)
+                    } catch (e: InvalidNoteException) {
+                        _eventFlow.emit(
+                            UiEvent.NavigateBackWithErrorMsg(
+                                message = e.message ?: "Can not save note"
                             )
                         )
-                        _eventFlow.emit(UiEvent.SaveNote)
-                    } catch (e: InvalidNoteException) {
-                        _eventFlow.emit(UiEvent.ShowSnackbar(
-                            message = e.message ?: "Can not save note"
-                        ))
                     }
                 }
+            }
 
+            AddEditNoteEvent.ChangeReadModeState -> {
+                _readOnlyMode.value = !readOnlyMode.value
+                if (noteTitle.value.text.isBlank() || noteContent.value.text.isBlank()) {
+                    viewModelScope.launch {
+                        _eventFlow.emit(
+                            UiEvent.ShowSnackbar(message = "Title and content can not be empty")
+                        )
+                    }
+                }
+            }
+
+            is AddEditNoteEvent.ChangeReminderState -> {
+                if (event.enable) {
+                    _noteReminder.value = event.remindTime
+                } else {
+                    _noteReminder.value = null
+                }
             }
         }
     }
 
     sealed class UiEvent {
         data class ShowSnackbar(val message: String) : UiEvent()
-        object SaveNote : UiEvent()
+        object NavigateBack : UiEvent()
+        data class NavigateBackWithErrorMsg(val message: String) : UiEvent()
     }
 }
+
+private const val TAG = "AddEditNoteScreen"

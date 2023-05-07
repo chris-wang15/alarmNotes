@@ -2,11 +2,11 @@ package com.tools.practicecompose.feature.repository
 
 import com.tools.practicecompose.feature.domain.model.Note
 import com.tools.practicecompose.feature.domain.model.NoteLevel
-import com.tools.practicecompose.feature.domain.sort.level.LevelType
-import com.tools.practicecompose.feature.repository.data_base.NoteDao
-import kotlinx.coroutines.flow.Flow
-import androidx.compose.ui.graphics.Color
 import com.tools.practicecompose.feature.domain.model.defaultLevelColorMap
+import com.tools.practicecompose.feature.repository.data_base.NoteDao
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 class NoteRepository(private val dao: NoteDao) {
     fun getNotes(): Flow<List<Note>> {
@@ -25,11 +25,13 @@ class NoteRepository(private val dao: NoteDao) {
         return dao.deleteNote(note)
     }
 
+    // TODO
     suspend fun editLevel(noteLevel: NoteLevel) {
-
+        delay(100)
     }
 
-    suspend fun getLevelColorMap(): Map<LevelType, Color> {
-        return defaultLevelColorMap
+    // TODO
+    fun getLevelColorMap(): Flow<Map<Int, NoteLevel>> = flow {
+        emit(defaultLevelColorMap)
     }
 }

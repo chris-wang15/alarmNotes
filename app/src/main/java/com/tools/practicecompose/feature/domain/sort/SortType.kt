@@ -4,5 +4,5 @@ enum class SortType {
     TITLE,
     DATE,
     LEVEL,
-    TERMINAL,
+    REMIND_TIME,
 }

@@ -17,6 +17,7 @@ fun TransparentHintTextField(
     hint: String,
     modifier: Modifier = Modifier,
     isHintVisible: Boolean = true,
+    readOnly: Boolean = false,
     onValueChange: (String) -> Unit,
     textStyle: TextStyle = TextStyle(),
     singleLine: Boolean = false,
@@ -27,6 +28,7 @@ fun TransparentHintTextField(
     ) {
         BasicTextField(
             value = text,
+            readOnly = readOnly,
             onValueChange = onValueChange,
             singleLine = singleLine,
             textStyle = textStyle,
@@ -39,7 +41,7 @@ fun TransparentHintTextField(
         )
 
         // hint
-        if (isHintVisible) {
+        if (isHintVisible && !readOnly) {
             Text(
                 text = hint,
                 style = textStyle,

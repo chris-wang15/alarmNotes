@@ -7,4 +7,5 @@ data class NoteUseCases(
     val getNoteByIdUseCase: GetNoteByIdUseCase,
     val editLevelUseCase: EditLevelUseCase,
     val getLevelColorUseCase: GetLevelColorUseCase,
+    val setReminderUseCase: SetReminderUseCase,
 )

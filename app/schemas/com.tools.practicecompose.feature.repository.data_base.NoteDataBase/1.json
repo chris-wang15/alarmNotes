@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "789b4d10b8f12dbc8def945a47e2f9bc",
+    "identityHash": "33753ef15b0f12ad089014b583e88918",
     "entities": [
       {
         "tableName": "Note",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`title` TEXT NOT NULL, `content` TEXT NOT NULL, `timestamp` INTEGER NOT NULL, `color` INTEGER NOT NULL, `id` INTEGER, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`title` TEXT NOT NULL, `content` TEXT NOT NULL, `timestamp` INTEGER, `remindTime` INTEGER, `level` INTEGER NOT NULL, `id` INTEGER, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "title",
@@ -24,11 +24,17 @@
             "fieldPath": "timestamp",
             "columnName": "timestamp",
             "affinity": "INTEGER",
-            "notNull": true
+            "notNull": false
           },
           {
-            "fieldPath": "color",
-            "columnName": "color",
+            "fieldPath": "remindTime",
+            "columnName": "remindTime",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "level",
+            "columnName": "level",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -52,7 +58,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '789b4d10b8f12dbc8def945a47e2f9bc')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '33753ef15b0f12ad089014b583e88918')"
     ]
   }
 }

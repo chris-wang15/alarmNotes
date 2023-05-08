@@ -11,6 +11,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.app.ActivityCompat
@@ -68,6 +69,8 @@ class AlarmReceiver : BroadcastReceiver() {
         if (permissionGranted(context)) {
             Log.i(TAG, "notify $note")
             notificationManagerCompat.notify(TAG, NOTIFICATION_ID, builder.build())
+        } else {
+            Toast.makeText(context, "Please turn on notification", Toast.LENGTH_LONG).show()
         }
     }
 

@@ -9,6 +9,6 @@ sealed class AddEditNoteEvent {
     data class ChangeContentFocus(val focusState: FocusState) : AddEditNoteEvent()
     data class ChangeLevel(val level: Int) : AddEditNoteEvent()
     object ChangeReadModeState: AddEditNoteEvent()
-    object SaveNoteAndExit: AddEditNoteEvent()
+    object ExitAndCheckSaveState: AddEditNoteEvent()
     data class ChangeReminderState(val remindTime: Long, val enable: Boolean) : AddEditNoteEvent()
 }

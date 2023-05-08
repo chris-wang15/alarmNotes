@@ -8,7 +8,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -22,6 +22,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.tools.practicecompose.feature.domain.model.NoteLevel
+import com.tools.practicecompose.feature.domain.model.selectableColorMap
+import com.tools.practicecompose.feature.presentation.level.EditLevelEvent
 import com.tools.practicecompose.feature.presentation.level.LevelViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -33,8 +35,10 @@ fun LevelScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val levelMapState = viewModel.state
     val levelKeyListState = viewModel.levelKeyList
+    val editLevel = viewModel.editLevel
 
     Scaffold(
+        floatingActionButton = { ResetButton(viewModel)},
         topBar = {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -72,6 +76,7 @@ fun LevelScreen(
                         } else {
                             LevelItem(
                                 modifier = Modifier.fillMaxWidth(),
+                                viewModel = viewModel,
                                 noteLevel = data,
                             )
                             Spacer(modifier = Modifier.height(16.dp))
@@ -79,13 +84,25 @@ fun LevelScreen(
                     }
                 }
             }
+
+            if (editLevel.value != null) {
+                ColorPickerDialog(
+                    initId = editLevel.value!!.level,
+                    onDismiss = {selectedColorId->
+                    val level = editLevel.value ?: return@ColorPickerDialog
+                    viewModel.onEvent(EditLevelEvent.EditLevelAndDismissDialog(
+                        level.copy(colorInt = selectableColorMap[selectedColorId]!!)
+                    ))
+                })
+            }
         }
     )
 }
 
 @Composable
 private fun LevelItem(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
+    viewModel: LevelViewModel,
     noteLevel: NoteLevel
 ) {
     Row(
@@ -107,11 +124,36 @@ private fun LevelItem(
         )
 
         Text(
+            modifier = Modifier.padding(16.dp),
             text = noteLevel.title,
-            style = MaterialTheme.typography.headlineLarge,
+            style = MaterialTheme.typography.headlineSmall,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )
+
+        IconButton(
+            onClick = {
+                viewModel.onEvent(EditLevelEvent.ShowColorPickerDialog(noteLevel))
+            }
+        ) {
+            Icon(
+                tint = MaterialTheme.colorScheme.primary,
+                imageVector = Icons.Default.Edit,
+                contentDescription = "Edit Level Detail"
+            )
+        }
+    }
+}
+
+@Composable
+private fun ResetButton(viewModel: LevelViewModel) {
+    FloatingActionButton(
+        containerColor = Color.DarkGray,
+        onClick = {
+
+        }
+    ) {
+        Icon(imageVector = Icons.Default.Refresh, contentDescription = "Reset Level Color")
     }
 }
 

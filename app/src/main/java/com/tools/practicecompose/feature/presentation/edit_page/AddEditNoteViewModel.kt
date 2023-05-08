@@ -104,42 +104,47 @@ class AddEditNoteViewModel @Inject constructor(
                 _noteLevel.value = event.level
             }
 
-            is AddEditNoteEvent.SaveNoteAndExit -> {
+            is AddEditNoteEvent.ExitAndCheckSaveState -> {
                 viewModelScope.launch {
-                    try {
-                        val note = Note(
-                            title = noteTitle.value.text,
-                            content = noteContent.value.text,
-                            timestamp = System.currentTimeMillis(),
-                            level = noteLevel.value,
-                            id = currentNoteId,
-                            remindTime = noteReminder.value,
-                        )
-                        // add note
-                        // TODO DELETE
-                        Log.e("AddEditNoteScreen", "Add Note level ${note.level}")
-                        noteUseCase.addNoteUseCase.invoke(note)
-                        // turn on or turn off reminder
-                        noteUseCase.setReminderUseCase.invoke(note)
+                    if (readOnlyMode.value) {
                         _eventFlow.emit(UiEvent.NavigateBack)
-                    } catch (e: InvalidNoteException) {
+                    } else {
                         _eventFlow.emit(
-                            UiEvent.NavigateBackWithErrorMsg(
-                                message = e.message ?: "Can not save note"
-                            )
+                            UiEvent.NavigateBackWithErrorMsg("Exit without saving")
                         )
                     }
                 }
             }
 
             AddEditNoteEvent.ChangeReadModeState -> {
-                _readOnlyMode.value = !readOnlyMode.value
-                if (noteTitle.value.text.isBlank() || noteContent.value.text.isBlank()) {
+                if (!readOnlyMode.value) {
+                    // save note
                     viewModelScope.launch {
-                        _eventFlow.emit(
-                            UiEvent.ShowSnackbar(message = "Title and content can not be empty")
-                        )
+                        try {
+                            val note = Note(
+                                title = noteTitle.value.text,
+                                content = noteContent.value.text,
+                                timestamp = System.currentTimeMillis(),
+                                level = noteLevel.value,
+                                id = currentNoteId,
+                                remindTime = noteReminder.value,
+                            )
+                            // add note
+                            Log.d(TAG, "Add Note level ${note.level}")
+                            noteUseCase.addNoteUseCase.invoke(note)
+                            // turn on or turn off reminder
+                            noteUseCase.setReminderUseCase.invoke(note)
+                            _readOnlyMode.value = !readOnlyMode.value
+                        } catch (e: InvalidNoteException) {
+                            _eventFlow.emit(
+                                UiEvent.ShowSnackbar(
+                                    message = e.message ?: "Can not save note"
+                                )
+                            )
+                        }
                     }
+                } else {
+                    _readOnlyMode.value = !readOnlyMode.value
                 }
             }
 

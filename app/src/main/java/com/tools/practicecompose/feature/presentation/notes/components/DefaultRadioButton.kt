@@ -21,6 +21,11 @@ fun DefaultRadioButton(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
     ) {
+        Text(
+            text = text,
+            maxLines = 1,
+            style = MaterialTheme.typography.bodySmall
+        )
         RadioButton(
             selected = selected,
             onClick = { onCheck() },
@@ -28,11 +33,6 @@ fun DefaultRadioButton(
                 selectedColor = MaterialTheme.colorScheme.primary,
                 unselectedColor = MaterialTheme.colorScheme.onBackground,
             )
-        )
-        Text(
-            text = text,
-            maxLines = 1,
-            style = MaterialTheme.typography.bodySmall
         )
     }
 }

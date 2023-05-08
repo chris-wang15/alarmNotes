@@ -3,7 +3,7 @@ package com.tools.practicecompose.feature.presentation.notes.components
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -17,6 +17,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.tools.practicecompose.feature.domain.model.Note
+import java.util.*
 
 @Composable
 fun NoteItem(
@@ -26,6 +27,17 @@ fun NoteItem(
     cornerRadius: Dp = 10.dp,
     onDeleteClick: () -> Unit,
 ) {
+    val remindStr = note.remindTime?.let {
+        val c = Calendar.getInstance()
+        c.timeInMillis = it
+        val month = c.get(Calendar.MONTH)
+        val day = c.get(Calendar.DAY_OF_MONTH)
+        val hour = c[Calendar.HOUR_OF_DAY]
+        val minute = c[Calendar.MINUTE]
+        "$day - ${month + 1} & $hour : $minute"
+    }
+
+
     Box(modifier = modifier) {
         Canvas(modifier = Modifier.matchParentSize()) {
             drawRoundRect(
@@ -59,12 +71,25 @@ fun NoteItem(
         }
 
         IconButton(
-            modifier = Modifier.align(Alignment.BottomEnd),
+            modifier = Modifier.align(Alignment.TopEnd),
             onClick = { onDeleteClick() }
         ) {
             Icon(
-                imageVector = Icons.Default.Delete,
+                tint = MaterialTheme.colorScheme.onSurface,
+                imageVector = Icons.Default.Close,
                 contentDescription = "Delete Note"
+            )
+        }
+
+        if (!remindStr.isNullOrBlank()) {
+            Text(
+                modifier = Modifier
+                    .padding(16.dp)
+                    .align(Alignment.BottomEnd),
+                text = remindStr,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurface,
+                maxLines = 1,
             )
         }
     }

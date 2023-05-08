@@ -42,7 +42,6 @@ fun AddEditNoteScreen(
 //        if (level == null) {
 //            Log.e(TAG, "Can not get level for ${levelState.value}")
 //        }
-//        // TODO make float button and back button animatable
 //        Animatable(Color(level?.colorInt ?: RedOrange.toArgb()))
 //    }
 
@@ -82,6 +81,7 @@ fun AddEditNoteScreen(
                         )
                     )
                     .padding(16.dp)
+                    .padding(top = padding.calculateTopPadding())
             ) {
                 // title text
                 BackButtonAndTitle(
@@ -95,7 +95,6 @@ fun AddEditNoteScreen(
                     scope = scope,
                 )
 
-                // TODO terminal selector
                 Spacer(modifier = Modifier.height(16.dp))
                 if (readOnly.value) {
                     val timeStamp = viewModel.noteReminder.value
@@ -132,12 +131,12 @@ private fun ChangeReadModeButton(
         onClick = {
             viewModel.onEvent(AddEditNoteEvent.ChangeReadModeState)
         },
-        containerColor = MaterialTheme.colorScheme.primary
+        containerColor = MaterialTheme.colorScheme.background
     ) {
         Icon(
             imageVector = if (viewModel.readOnlyMode.value) {
-                Icons.Default.Lock
-            } else Icons.Default.LockOpen,
+                Icons.Default.Edit
+            } else Icons.Default.Save,
             contentDescription = "Change Read | Write Mode"
         )
     }
@@ -198,7 +197,7 @@ private fun BackButtonAndTitle(
         verticalAlignment = Alignment.CenterVertically
     ) {
         IconButton(
-            onClick = { viewModel.onEvent(AddEditNoteEvent.SaveNoteAndExit) },
+            onClick = { viewModel.onEvent(AddEditNoteEvent.ExitAndCheckSaveState) },
         ) {
             Icon(
                 imageVector = Icons.Default.ArrowBack,

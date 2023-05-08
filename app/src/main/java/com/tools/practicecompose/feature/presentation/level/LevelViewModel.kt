@@ -1,5 +1,6 @@
 package com.tools.practicecompose.feature.presentation.level
 
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -25,6 +26,9 @@ class LevelViewModel @Inject constructor(
     private val _levelKeyList = mutableStateOf(defaultLevelKeyList)
     val levelKeyList: State<List<Int>> = _levelKeyList
 
+    private val _editLevel: MutableState<NoteLevel?> = mutableStateOf(null)
+    val editLevel: State<NoteLevel?> = _editLevel
+
     private var getColorMapJob: Job? = null
 
     init {
@@ -33,13 +37,16 @@ class LevelViewModel @Inject constructor(
 
     fun onEvent(event: EditLevelEvent) {
         when (event) {
-            is EditLevelEvent.EditLevel -> {
-                if (event.value == state.value[event.value.level]) {
-                    return
+            is EditLevelEvent.EditLevelAndDismissDialog -> {
+                if (event.value != state.value[event.value.level]) {
+                    viewModelScope.launch {
+                        noteUseCase.editLevelUseCase.invoke(event.value)
+                    }
                 }
-                viewModelScope.launch {
-                    noteUseCase.editLevelUseCase.invoke(event.value)
-                }
+                _editLevel.value = null
+            }
+            is EditLevelEvent.ShowColorPickerDialog -> {
+                _editLevel.value = event.value
             }
         }
     }

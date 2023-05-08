@@ -22,7 +22,8 @@ class GetNotesUseCase(
                         SortType.TITLE -> notes.sortedBy { it.title.lowercase() }
                         SortType.DATE -> notes.sortedBy { it.timestamp }
                         SortType.LEVEL -> notes.sortedBy { it.level }
-                        SortType.REMIND_TIME -> notes.sortedBy { it.remindTime }
+                        SortType.REMIND_TIME -> notes.filter { it.remindTime != null }
+                            .sortedBy { it.remindTime }
                     }
                 }
                 OrderType.DESCENDING -> {

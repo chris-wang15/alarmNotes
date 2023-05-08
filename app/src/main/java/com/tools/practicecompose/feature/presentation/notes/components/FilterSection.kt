@@ -9,6 +9,35 @@ import com.tools.practicecompose.feature.domain.sort.OrderType
 import com.tools.practicecompose.feature.domain.sort.SortType
 
 @Composable
+fun OrderSection(
+    modifier: Modifier = Modifier,
+    noteOrder: NoteOrder = NoteOrder(),
+    onOrderChange: (noteOrder: NoteOrder) -> Unit,
+) {
+    Column(
+        modifier = modifier,
+    ) {
+        Row(modifier = Modifier.fillMaxWidth()) {
+            DefaultRadioButton(
+                text = "Ascending",
+                selected = noteOrder.orderType == OrderType.ASCENDING,
+                onCheck = {
+                    onOrderChange(noteOrder.copy(orderType = OrderType.ASCENDING))
+                })
+            Spacer(modifier = Modifier.width(8.dp))
+
+            DefaultRadioButton(
+                text = "Descending",
+                selected = noteOrder.orderType == OrderType.DESCENDING,
+                onCheck = {
+                    onOrderChange(noteOrder.copy(orderType = OrderType.DESCENDING))
+                })
+            Spacer(modifier = Modifier.width(8.dp))
+        }
+    }
+}
+
+@Composable
 fun FilterSection(
     modifier: Modifier = Modifier,
     noteOrder: NoteOrder = NoteOrder(),
@@ -33,7 +62,8 @@ fun FilterSection(
                     onOrderChange(noteOrder.copy(sortType = SortType.DATE))
                 })
             Spacer(modifier = Modifier.width(8.dp))
-
+        }
+        Row(modifier = Modifier.fillMaxWidth()) {
             DefaultRadioButton(
                 text = "Level",
                 selected = noteOrder.sortType == SortType.LEVEL,
@@ -41,34 +71,13 @@ fun FilterSection(
                     onOrderChange(noteOrder.copy(sortType = SortType.LEVEL))
                 })
             Spacer(modifier = Modifier.width(8.dp))
-        }
-        Row(modifier = Modifier.fillMaxWidth()) {
+
             DefaultRadioButton(
                 text = "Reminder",
                 selected = noteOrder.sortType == SortType.REMIND_TIME,
                 onCheck = {
                     onOrderChange(noteOrder.copy(sortType = SortType.REMIND_TIME))
                 })
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Row(modifier = Modifier.fillMaxWidth()) {
-            DefaultRadioButton(
-                text = "Ascending",
-                selected = noteOrder.orderType == OrderType.ASCENDING,
-                onCheck = {
-                    onOrderChange(noteOrder.copy(orderType = OrderType.ASCENDING))
-                })
-            Spacer(modifier = Modifier.width(8.dp))
-
-            DefaultRadioButton(
-                text = "Descending",
-                selected = noteOrder.orderType == OrderType.DESCENDING,
-                onCheck = {
-                    onOrderChange(noteOrder.copy(orderType = OrderType.DESCENDING))
-                })
-            Spacer(modifier = Modifier.width(8.dp))
         }
     }
 }

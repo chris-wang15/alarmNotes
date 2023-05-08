@@ -1,6 +1,7 @@
 package com.tools.practicecompose.feature.presentation.notes.components
 
 import androidx.compose.animation.*
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -15,6 +16,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -43,6 +45,7 @@ fun NoteScreen(
         drawerContainerColor = Color.Transparent,
         drawerContent = {
             DrawerContent(
+                viewModel = viewModel,
                 navController = navController,
                 scope = scope,
                 drawerState = drawerState,
@@ -70,7 +73,7 @@ fun NoteScreen(
                             enter = fadeIn() + slideInVertically(),
                             exit = fadeOut() + slideOutVertically()
                         ) {
-                            FilterSection(
+                            OrderSection(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(vertical = 16.dp),
@@ -104,7 +107,7 @@ private fun TopBar(viewModel: NotesViewModel) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = "Your note",
+            text = "Notes List",
             style = MaterialTheme.typography.headlineMedium
         )
         IconButton(onClick = {
@@ -161,10 +164,12 @@ private fun NoteList(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun DrawerContent(
+    viewModel: NotesViewModel,
     navController: NavController,
     scope: CoroutineScope,
     drawerState: DrawerState,
 ) {
+    val state = viewModel.state.value
     Column(
         modifier = Modifier
             .requiredWidth(250.dp)
@@ -172,11 +177,12 @@ private fun DrawerContent(
             .background(
                 MaterialTheme.colorScheme.background,
                 RoundedCornerShape(topEnd = 16.dp, bottomEnd = 16.dp)
-            )
+            ),
+        verticalArrangement = Arrangement.SpaceBetween,
     ) {
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(8.dp))
         NavigationDrawerItem(
-            icon = { Icon(Icons.Default.Edit, contentDescription = "Add Note") },
+            icon = { Icon(Icons.Default.Add, contentDescription = "Add Note") },
             label = { Text(text = "Add Notes") },
             selected = true,
             onClick = {
@@ -184,10 +190,7 @@ private fun DrawerContent(
                 navController.navigate(Screen.AddEditNoteScreen.route)
             },
             modifier = Modifier.padding(
-                start = 16.dp,
-                end = 16.dp,
-                top = 32.dp,
-                bottom = 32.dp
+                horizontal = 16.dp
             )
         )
 
@@ -200,36 +203,45 @@ private fun DrawerContent(
                 navController.navigate(Screen.EditLevelScreen.route)
             },
             modifier = Modifier.padding(
-                start = 16.dp,
-                end = 16.dp,
-                top = 32.dp,
-                bottom = 32.dp
+                horizontal = 16.dp
             )
         )
 
-        NavigationDrawerItem(
-            icon = { Icon(Icons.Default.Edit, contentDescription = "Edit Level") },
-            label = { Text(text = "Reminder Off") },
-            selected = true,
-            onClick = {
-                scope.launch { drawerState.close() }
-            },
-            modifier = Modifier.padding(
-                start = 16.dp,
-                end = 16.dp,
-                top = 32.dp,
-                bottom = 32.dp
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+        ) {
+            val filterContainerColor = MaterialTheme.colorScheme.secondaryContainer
+            Canvas(modifier = Modifier.matchParentSize()) {
+                drawRoundRect(
+                    color = filterContainerColor,
+                    size = size,
+                    cornerRadius = CornerRadius(16.dp.toPx())
+                )
+            }
+
+            FilterSection(
+                modifier = Modifier.fillMaxWidth().padding(start = 8.dp),
+                noteOrder = state.noteOrder,
+                onOrderChange = {
+                    scope.launch { drawerState.close() }
+                    viewModel.onEvent(NotesEvent.Order(it))
+                }
             )
-        )
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
     }
 }
 
 @Composable
 @Deprecated("Test Mode Only")
-fun ShowTestButton(
+private fun ShowTestButton(
     navController: NavController,
 ) {
     FloatingActionButton(
+        containerColor = Color.Transparent,
         onClick = {
             navController.navigate(Screen.AddEditNoteScreen.route)
         }

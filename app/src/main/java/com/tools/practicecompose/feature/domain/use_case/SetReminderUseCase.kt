@@ -1,20 +1,21 @@
 package com.tools.practicecompose.feature.domain.use_case
 
+import android.content.Context
 import com.tools.practicecompose.feature.domain.model.Note
-import com.tools.practicecompose.feature.domain.model.NoteLevel
 import com.tools.practicecompose.feature.repository.NoteRepository
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
+import com.tools.practicecompose.feature.repository.alarm.MyAlarmScheduler
 
 class SetReminderUseCase(
+    private val context: Context,
     private val repository: NoteRepository
 ) {
-    suspend fun invoke(note: Note) {
-        // TODO
+    private val scheduler = MyAlarmScheduler(context)
+
+    fun invoke(note: Note) {
         if (note.remindTime == null) {
-            delay(100)
+            scheduler.cancel(note)
         } else {
-            delay(99)
+            scheduler.schedule(note)
         }
     }
 }

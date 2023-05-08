@@ -33,7 +33,10 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideNoteUseCases(repository: NoteRepository): NoteUseCases {
+    fun provideNoteUseCases(
+        app: Application,
+        repository: NoteRepository
+    ): NoteUseCases {
         return NoteUseCases(
             getNotesUseCase = GetNotesUseCase(repository),
             deleteNoteUseCase = DeleteNoteUseCase(repository),
@@ -41,7 +44,7 @@ object AppModule {
             getNoteByIdUseCase = GetNoteByIdUseCase(repository),
             editLevelUseCase = EditLevelUseCase(repository),
             getLevelColorUseCase = GetLevelColorUseCase(repository),
-            setReminderUseCase = SetReminderUseCase(repository),
+            setReminderUseCase = SetReminderUseCase(app, repository),
         )
     }
 }

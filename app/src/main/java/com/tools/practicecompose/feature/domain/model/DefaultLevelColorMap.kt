@@ -15,6 +15,10 @@ val selectableColorMap: Map<Int, Int> = mapOf(
     2 to LightGrey.toArgb(),
     3 to LightBlue.toArgb(),
     4 to LightOrange.toArgb(),
+    5 to Crimson.toArgb(),
+    6 to PaleVioletRed.toArgb(),
+    7 to SteelBlue.toArgb(),
+    8 to RosyBrown.toArgb(),
 )
 
 fun Int?.argb(): Int {

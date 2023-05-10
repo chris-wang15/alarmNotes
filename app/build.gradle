@@ -17,7 +17,7 @@ android {
         versionCode 100
         versionName "1.0.0"
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "com.tools.practicecompose.HiltTestRunner"
 
         javaCompileOptions {
             annotationProcessorOptions {
@@ -103,4 +103,9 @@ dependencies {
 
     // leakcanary
     // debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.10'
+
+    // Instrumentation tests
+    androidTestImplementation 'com.google.dagger:hilt-android-testing:2.44'
+    kaptAndroidTest 'com.google.dagger:hilt-android-compiler:2.44'
+    androidTestImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.5.1"
 }

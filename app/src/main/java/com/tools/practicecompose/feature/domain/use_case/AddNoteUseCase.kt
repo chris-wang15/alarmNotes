@@ -2,10 +2,10 @@ package com.tools.practicecompose.feature.domain.use_case
 
 import com.tools.practicecompose.feature.domain.model.InvalidNoteException
 import com.tools.practicecompose.feature.domain.model.Note
-import com.tools.practicecompose.feature.repository.NoteRepository
+import com.tools.practicecompose.feature.repository.MainRepository
 
 class AddNoteUseCase(
-    private val repository: NoteRepository
+    private val repository: MainRepository
 ) {
     @kotlin.jvm.Throws(InvalidNoteException::class)
     suspend fun invoke(note: Note) {

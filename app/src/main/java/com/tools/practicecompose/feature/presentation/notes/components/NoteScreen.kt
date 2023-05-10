@@ -140,7 +140,7 @@ private fun NoteList(
                         )
                     },
                 color = Color(
-                    levelMap.value[note.level]?.colorInt ?: 0x00000000
+                    levelMap.value[note.level]?.colorInt ?: 0x000000
                 ),
                 note = note,
                 onDeleteClick = {

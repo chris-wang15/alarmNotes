@@ -158,7 +158,7 @@ private fun LevelSelector(
         val colorMap = levelModel.state.value
         if (!readOnlyState.value) {
             colorMap.keys.forEach { levelId ->
-                val colorInt = colorMap[levelId]!!.colorInt
+                val colorInt = colorMap[levelId]?.colorInt ?: 0x000000
                 Box(modifier = Modifier
                     .size(50.dp)
                     .shadow(15.dp, CircleShape)

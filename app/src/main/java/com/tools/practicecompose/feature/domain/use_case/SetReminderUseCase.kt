@@ -2,12 +2,12 @@ package com.tools.practicecompose.feature.domain.use_case
 
 import android.content.Context
 import com.tools.practicecompose.feature.domain.model.Note
-import com.tools.practicecompose.feature.repository.NoteRepository
+import com.tools.practicecompose.feature.repository.MainRepository
 import com.tools.practicecompose.feature.repository.alarm.MyAlarmScheduler
 
 class SetReminderUseCase(
     private val context: Context,
-    private val repository: NoteRepository
+    private val repository: MainRepository
 ) {
     private val scheduler = MyAlarmScheduler(context)
 

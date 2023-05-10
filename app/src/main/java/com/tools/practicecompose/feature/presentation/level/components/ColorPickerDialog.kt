@@ -49,10 +49,7 @@ private fun ColorPickerContent(
     onDismiss: (selectedColorId: Int) -> Unit
 ) {
 
-    val colorIdList: MutableList<Int> = arrayListOf()
-    selectableColorMap.keys.forEach {
-        colorIdList.add(it)
-    }
+    val colorIdList: List<Int> = ArrayList(selectableColorMap.keys)
     Column(modifier = Modifier
         .fillMaxWidth()
         .padding(8.dp)) {

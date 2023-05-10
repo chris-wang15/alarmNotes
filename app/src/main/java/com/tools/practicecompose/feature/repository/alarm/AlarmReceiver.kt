@@ -12,19 +12,26 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.util.Log
 import android.widget.Toast
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.tools.practicecompose.MainActivity
 import com.tools.practicecompose.R
 import com.tools.practicecompose.feature.domain.model.Note
-import com.tools.practicecompose.feature.domain.model.defaultLevelColorMap
+import com.tools.practicecompose.feature.domain.use_case.NoteUseCases
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.cancellable
+import kotlinx.coroutines.flow.collectLatest
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class AlarmReceiver : BroadcastReceiver() {
+
+    @Inject
+    lateinit var noteUseCase: NoteUseCases
+
+    private var lastNotificationJob: Job? = null
 
     override fun onReceive(context: Context?, intent: Intent?) {
         val note = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -35,10 +42,31 @@ class AlarmReceiver : BroadcastReceiver() {
         setNotify(context, note)
     }
 
-    @SuppressLint("MissingPermission")
     private fun setNotify(context: Context?, note: Note?) {
         context ?: return
         note ?: return
+        lastNotificationJob?.cancel()
+        lastNotificationJob = CoroutineScope(Dispatchers.IO).launch {
+            try {
+                noteUseCase.getLevelMapUseCase.invoke()
+                    .cancellable()
+                    .collectLatest { map ->
+                        val colorInt = map[note.level]?.colorInt ?: 0x000000
+                        Log.d(TAG, "colorInt: $colorInt")
+                        pushNotifyToSystem(
+                            context = context, note = note, colorInt = colorInt
+                        )
+                    }
+            } catch (e: Exception) {
+                Log.e(TAG, "cancelled when catch error: ", e)
+            } finally {
+                cancel()
+            }
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun pushNotifyToSystem(context: Context, note: Note, colorInt: Int) {
         val notificationManagerCompat = NotificationManagerCompat.from(context)
         val pendingIntent = PendingIntent.getActivity(
             context,
@@ -49,7 +77,7 @@ class AlarmReceiver : BroadcastReceiver() {
         val builder = NotificationCompat.Builder(
             context, context.packageName
         ).apply {
-            color = defaultLevelColorMap[note.level]?.colorInt ?: Color.White.toArgb()
+            color = colorInt
             setSmallIcon(R.drawable.baseline_note_24)
             setContentTitle(note.title)
             setContentText(note.content)

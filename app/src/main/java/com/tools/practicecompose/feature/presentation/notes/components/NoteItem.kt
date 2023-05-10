@@ -53,6 +53,7 @@ fun NoteItem(
                 .padding(16.dp)
                 .padding(end = 32.dp)
         ) {
+            // Title
             Text(
                 text = note.title,
                 style = MaterialTheme.typography.headlineMedium,
@@ -61,15 +62,17 @@ fun NoteItem(
                 overflow = TextOverflow.Ellipsis
             )
             Spacer(modifier = Modifier.height(8.dp))
+            // Content
             Text(
-                text = note.title,
+                text = note.content,
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurface,
-                maxLines = 10,
+                maxLines = 2,
                 overflow = TextOverflow.Ellipsis
             )
         }
 
+        // close button
         IconButton(
             modifier = Modifier.align(Alignment.TopEnd),
             onClick = { onDeleteClick() }
@@ -81,6 +84,7 @@ fun NoteItem(
             )
         }
 
+        // reminder time
         if (!remindStr.isNullOrBlank()) {
             Text(
                 modifier = Modifier

@@ -22,7 +22,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.tools.practicecompose.feature.domain.model.NoteLevel
-import com.tools.practicecompose.feature.domain.model.selectableColorMap
 import com.tools.practicecompose.feature.presentation.level.EditLevelEvent
 import com.tools.practicecompose.feature.presentation.level.LevelViewModel
 
@@ -35,7 +34,7 @@ fun LevelScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val levelMapState = viewModel.state
     val levelKeyListState = viewModel.levelKeyList
-    val editLevel = viewModel.editLevel
+    val editLevel = viewModel.editLevelOfPicker
 
     Scaffold(
         floatingActionButton = { ResetButton(viewModel)},
@@ -87,11 +86,11 @@ fun LevelScreen(
 
             if (editLevel.value != null) {
                 ColorPickerDialog(
-                    initId = editLevel.value!!.level,
+                    initId = editLevel.value?.colorId ?: 0,
                     onDismiss = {selectedColorId->
                     val level = editLevel.value ?: return@ColorPickerDialog
                     viewModel.onEvent(EditLevelEvent.EditLevelAndDismissDialog(
-                        level.copy(colorInt = selectableColorMap[selectedColorId]!!)
+                        level.copy(colorId = selectedColorId)
                     ))
                 })
             }
@@ -150,7 +149,7 @@ private fun ResetButton(viewModel: LevelViewModel) {
     FloatingActionButton(
         containerColor = Color.DarkGray,
         onClick = {
-
+            viewModel.onEvent(EditLevelEvent.ResetLevelInfo)
         }
     ) {
         Icon(imageVector = Icons.Default.Refresh, contentDescription = "Reset Level Color")

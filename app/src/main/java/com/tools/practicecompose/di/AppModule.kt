@@ -3,7 +3,7 @@ package com.tools.practicecompose.di
 import android.app.Application
 import androidx.room.Room
 import com.tools.practicecompose.feature.repository.data_base.NoteDataBase
-import com.tools.practicecompose.feature.repository.NoteRepository
+import com.tools.practicecompose.feature.repository.MainRepository
 import com.tools.practicecompose.feature.domain.use_case.*
 import dagger.Module
 import dagger.Provides
@@ -27,15 +27,15 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideNoteRepository(db: NoteDataBase): NoteRepository {
-        return NoteRepository(db.noteDao)
+    fun provideNoteRepository(db: NoteDataBase, app: Application): MainRepository {
+        return MainRepository(db.noteDao, app)
     }
 
     @Provides
     @Singleton
     fun provideNoteUseCases(
         app: Application,
-        repository: NoteRepository
+        repository: MainRepository
     ): NoteUseCases {
         return NoteUseCases(
             getNotesUseCase = GetNotesUseCase(repository),
@@ -43,8 +43,9 @@ object AppModule {
             addNoteUseCase = AddNoteUseCase(repository),
             getNoteByIdUseCase = GetNoteByIdUseCase(repository),
             editLevelUseCase = EditLevelUseCase(repository),
-            getLevelColorUseCase = GetLevelColorUseCase(repository),
+            getLevelMapUseCase = GetLevelMapUseCase(repository),
             setReminderUseCase = SetReminderUseCase(app, repository),
+            resetLevelUseCase = ResetLevelUseCase(repository),
         )
     }
 }

@@ -7,7 +7,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tools.practicecompose.feature.domain.model.NoteLevel
 import com.tools.practicecompose.feature.domain.model.defaultLevelColorMap
-import com.tools.practicecompose.feature.domain.model.defaultLevelKeyList
 import com.tools.practicecompose.feature.domain.use_case.NoteUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -23,11 +22,11 @@ class LevelViewModel @Inject constructor(
 
     private val _state = mutableStateOf(defaultLevelColorMap)
     val state: State<Map<Int, NoteLevel>> = _state
-    private val _levelKeyList = mutableStateOf(defaultLevelKeyList)
+    private val _levelKeyList = mutableStateOf(ArrayList(defaultLevelColorMap.keys).toList())
     val levelKeyList: State<List<Int>> = _levelKeyList
 
-    private val _editLevel: MutableState<NoteLevel?> = mutableStateOf(null)
-    val editLevel: State<NoteLevel?> = _editLevel
+    private val _editLevelOfPicker: MutableState<NoteLevel?> = mutableStateOf(null)
+    val editLevelOfPicker: State<NoteLevel?> = _editLevelOfPicker
 
     private var getColorMapJob: Job? = null
 
@@ -43,18 +42,26 @@ class LevelViewModel @Inject constructor(
                         noteUseCase.editLevelUseCase.invoke(event.value)
                     }
                 }
-                _editLevel.value = null
+                _editLevelOfPicker.value = null
             }
             is EditLevelEvent.ShowColorPickerDialog -> {
-                _editLevel.value = event.value
+                _editLevelOfPicker.value = event.value
+            }
+            is EditLevelEvent.ResetLevelInfo -> {
+                viewModelScope.launch {
+                    noteUseCase.resetLevelUseCase.invoke()
+                }
+                _editLevelOfPicker.value = null
             }
         }
     }
 
     private fun loadLevelMap() {
         getColorMapJob?.cancel()
-        getColorMapJob = noteUseCase.getLevelColorUseCase.invoke().onEach {
+        getColorMapJob = noteUseCase.getLevelMapUseCase.invoke().onEach {
             _state.value = it
+            val levelKeyIdList = ArrayList(it.keys)
+            _levelKeyList.value = levelKeyIdList
         }
             .launchIn(viewModelScope)
     }

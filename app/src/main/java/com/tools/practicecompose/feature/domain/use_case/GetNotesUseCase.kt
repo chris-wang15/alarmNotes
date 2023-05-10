@@ -4,12 +4,12 @@ import com.tools.practicecompose.feature.domain.model.Note
 import com.tools.practicecompose.feature.domain.sort.NoteOrder
 import com.tools.practicecompose.feature.domain.sort.OrderType
 import com.tools.practicecompose.feature.domain.sort.SortType
-import com.tools.practicecompose.feature.repository.NoteRepository
+import com.tools.practicecompose.feature.repository.MainRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 class GetNotesUseCase(
-    private val repository: NoteRepository
+    private val repository: MainRepository
 ) {
 
     fun invoke(

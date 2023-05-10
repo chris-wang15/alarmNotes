@@ -3,7 +3,7 @@
 -- This application can add and watch notes, and set notifications for notes.
 -- This application will use Room as a local database, and use Data Store for preference storage.
 -- Clean architecture, coroutine flow, dagger hilt will be used.
--- A local video file shows the usage of this application.
+-- A local video file (/video.mp4) shows the usage of this application.
 
 ## About the features
 -- Note List

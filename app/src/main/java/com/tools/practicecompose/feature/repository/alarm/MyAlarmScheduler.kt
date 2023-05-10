@@ -5,6 +5,7 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import com.tools.practicecompose.feature.domain.model.Note
 
 class MyAlarmScheduler(
@@ -21,6 +22,7 @@ class MyAlarmScheduler(
 //            item.remindTime!!
 //        }
         val triggerAtMillis = item.remindTime!!
+        Log.d(TAG, "trigger time: $triggerAtMillis")
 
         val intent = Intent(context, AlarmReceiver::class.java).apply {
             putExtra(EXTRA_NOTE, item)
@@ -50,3 +52,4 @@ class MyAlarmScheduler(
 }
 
 const val EXTRA_NOTE = "EXTRA_NOTE"
+private const val TAG = "MyAlarmScheduler"

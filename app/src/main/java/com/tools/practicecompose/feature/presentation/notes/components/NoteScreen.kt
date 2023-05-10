@@ -18,10 +18,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.tools.practicecompose.BuildConfig
 import com.tools.practicecompose.feature.presentation.Screen
 import com.tools.practicecompose.feature.presentation.level.LevelViewModel
 import com.tools.practicecompose.feature.presentation.notes.NotesEvent
@@ -53,11 +53,11 @@ fun NoteScreen(
         },
         content = {
             Scaffold(
-                floatingActionButton = {
-                    if (BuildConfig.DEBUG) {
-                        ShowTestButton(navController)
-                    }
-                },
+//                floatingActionButton = {
+//                    if (BuildConfig.DEBUG) {
+//                        ShowTestButton(navController)
+//                    }
+//                },
                 snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
                 content = { padding ->
                     Column(
@@ -92,6 +92,21 @@ fun NoteScreen(
                             scope = scope,
                             snackbarHostState = snackbarHostState,
                         )
+                    }
+                    // No Result Text
+                    if (state.note.isEmpty()) {
+                        Box(
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            Text(
+                                text = "Slide Right And Add Your New Notes",
+                                style = MaterialTheme.typography.displaySmall,
+                                modifier = Modifier.fillMaxSize()
+                                    .wrapContentHeight(), // used for text vertically center
+                                color = MaterialTheme.colorScheme.primary,
+                                textAlign = TextAlign.Center,
+                            )
+                        }
                     }
                 }
             )
@@ -222,7 +237,9 @@ private fun DrawerContent(
             }
 
             FilterSection(
-                modifier = Modifier.fillMaxWidth().padding(start = 8.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 8.dp),
                 noteOrder = state.noteOrder,
                 onOrderChange = {
                     scope.launch { drawerState.close() }

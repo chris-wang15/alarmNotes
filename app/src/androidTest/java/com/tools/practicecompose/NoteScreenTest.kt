@@ -1,20 +1,14 @@
 package com.tools.practicecompose
 
 import android.content.Context
-import androidx.activity.compose.setContent
-import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.input.key.KeyEvent
+import androidx.compose.ui.input.key.NativeKeyEvent
+import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.compose.ui.test.onNodeWithContentDescription
-import androidx.compose.ui.test.onNodeWithTag
-import androidx.compose.ui.test.performClick
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import androidx.test.core.app.ApplicationProvider
+import androidx.test.espresso.Espresso
 import com.tools.practicecompose.di.AppModule
-import com.tools.practicecompose.feature.presentation.Screen
-import com.tools.practicecompose.feature.presentation.notes.components.NoteScreen
-import com.tools.practicecompose.ui.theme.MainComposeTheme
+import com.tools.practicecompose.feature.presentation.TestTag
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.UninstallModules
@@ -36,27 +30,21 @@ class NoteScreenTest {
     @Before
     fun setUp() {
         hiltRule.inject()
-        composeRule.activity.setContent {
-            val navController = rememberNavController()
-            MainComposeTheme {
-                NavHost(
-                    navController = navController,
-                    startDestination = Screen.NoteScreen.route
-                ) {
-                    composable(route = Screen.NoteScreen.route) {
-                        NoteScreen(navController = navController)
-                    }
-                }
-            }
-        }
     }
 
     @Test
-    fun clickOrderSection() {
+    fun addNewNotes() {
         val context = ApplicationProvider.getApplicationContext<Context>()
         Assert.assertEquals("com.tools.practicecompose", context.packageName)
-        composeRule.onNodeWithTag("OrderSection").assertDoesNotExist()
-        composeRule.onNodeWithContentDescription("Sort").performClick()
-        composeRule.onNodeWithTag("OrderSection").assertIsDisplayed()
+        composeRule.onNodeWithTag(TestTag.NoteScreen).performTouchInput { swipeRight() }
+        composeRule.onNodeWithTag(TestTag.NoteScreenDrawer).assertIsDisplayed()
+        composeRule.onNodeWithTag(TestTag.DrawerAddNoteButton).performClick()
+        composeRule.onNodeWithTag(TestTag.EditScreen).assertIsDisplayed()
+        composeRule.onNodeWithTag(TestTag.EditScreenTitle).performTextInput("Title1")
+        composeRule.onNodeWithTag(TestTag.EditScreenContent).performTextInput("Content1")
+        composeRule.onNodeWithContentDescription("Change Read | Write Mode").performClick()
+//        composeRule.activity.onBackPressedDispatcher.onBackPressed()
+        Espresso.pressBack()
+        composeRule.onNodeWithTag(TestTag.NoteList).onChildren().onFirst().performClick()
     }
 }

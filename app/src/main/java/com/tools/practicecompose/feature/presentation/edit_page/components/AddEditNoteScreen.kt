@@ -15,9 +15,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.tools.practicecompose.feature.presentation.TestTag
 import com.tools.practicecompose.feature.presentation.edit_page.AddEditNoteEvent
 import com.tools.practicecompose.feature.presentation.edit_page.AddEditNoteViewModel
 import com.tools.practicecompose.feature.presentation.level.LevelViewModel
@@ -82,6 +84,7 @@ fun AddEditNoteScreen(
                     )
                     .padding(16.dp)
                     .padding(top = padding.calculateTopPadding())
+                    .testTag(TestTag.EditScreen)
             ) {
                 // title text
                 BackButtonAndTitle(
@@ -220,6 +223,7 @@ private fun BackButtonAndTitle(
             isHintVisible = titleState.value.isHintVisible,
             singleLine = true,
             textStyle = MaterialTheme.typography.headlineLarge,
+            textFieldTestTag = TestTag.EditScreenTitle,
         )
     }
 }
@@ -243,7 +247,8 @@ private fun ContentTextField(
         isHintVisible = contentState.value.isHintVisible,
         singleLine = false,
         textStyle = MaterialTheme.typography.bodySmall,
-        modifier = Modifier.fillMaxHeight()
+        modifier = Modifier.fillMaxHeight(),
+        textFieldTestTag = TestTag.EditScreenContent,
     )
 }
 

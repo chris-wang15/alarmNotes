@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusState
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.TextStyle
 
 @Composable
@@ -22,6 +23,7 @@ fun TransparentHintTextField(
     textStyle: TextStyle = TextStyle(),
     singleLine: Boolean = false,
     onFocusChange: (FocusState) -> Unit,
+    textFieldTestTag: String = "UnKnownTextField"
 ) {
     Box(
         modifier = modifier
@@ -37,7 +39,7 @@ fun TransparentHintTextField(
                 .onFocusChanged {
                     onFocusChange(it)
                 }
-
+                .testTag(textFieldTestTag)
         )
 
         // hint

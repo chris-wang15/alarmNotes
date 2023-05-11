@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.tools.practicecompose.feature.presentation.Screen
+import com.tools.practicecompose.feature.presentation.TestTag
 import com.tools.practicecompose.feature.presentation.level.LevelViewModel
 import com.tools.practicecompose.feature.presentation.notes.NotesEvent
 import com.tools.practicecompose.feature.presentation.notes.NotesViewModel
@@ -65,6 +66,7 @@ fun NoteScreen(
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(16.dp)
+                            .testTag(TestTag.NoteScreen),
                     ) {
                         TopBar(viewModel = viewModel)
 
@@ -78,7 +80,7 @@ fun NoteScreen(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(vertical = 16.dp)
-                                    .testTag("OrderSection"),
+                                    .testTag(TestTag.OrderSection),
                                 noteOrder = state.noteOrder,
                                 onOrderChange = {
                                     viewModel.onEvent(NotesEvent.Order(it))
@@ -103,7 +105,8 @@ fun NoteScreen(
                             Text(
                                 text = "Slide Right And Add Your New Notes",
                                 style = MaterialTheme.typography.displaySmall,
-                                modifier = Modifier.fillMaxSize()
+                                modifier = Modifier
+                                    .fillMaxSize()
                                     .wrapContentHeight(), // used for text vertically center
                                 color = MaterialTheme.colorScheme.primary,
                                 textAlign = TextAlign.Center,
@@ -145,7 +148,11 @@ private fun NoteList(
 ) {
     val state = viewModel.state.value
     val levelMap = levelViewModel.state
-    LazyColumn(modifier = Modifier.fillMaxSize()) {
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .testTag(TestTag.NoteList)
+    ) {
         items(state.note) { note ->
             NoteItem(
                 modifier = Modifier
@@ -194,7 +201,8 @@ private fun DrawerContent(
             .background(
                 MaterialTheme.colorScheme.background,
                 RoundedCornerShape(topEnd = 16.dp, bottomEnd = 16.dp)
-            ),
+            )
+            .testTag(TestTag.NoteScreenDrawer),
         verticalArrangement = Arrangement.SpaceBetween,
     ) {
         Spacer(modifier = Modifier.height(8.dp))
@@ -206,9 +214,9 @@ private fun DrawerContent(
                 scope.launch { drawerState.close() }
                 navController.navigate(Screen.AddEditNoteScreen.route)
             },
-            modifier = Modifier.padding(
-                horizontal = 16.dp
-            )
+            modifier = Modifier
+                .padding(horizontal = 16.dp)
+                .testTag(TestTag.DrawerAddNoteButton)
         )
 
         NavigationDrawerItem(

@@ -17,3 +17,9 @@ A floating button is used to switch between read mode and write mode.<br>
 
 -- Level Page
 Every note level has a representative color, there is a color picker dialog for user-defined colors.
+
+
+
+
+https://github.com/chris-wang15/alarmNotes/assets/128122102/bf88b9bb-c186-440c-8d7f-57b331851e9d
+
